@@ -13,3 +13,12 @@ module Sigmoid = struct
 
   let logistic p = 1. /. (1. +. exp (-.p))
 end
+
+
+
+(* Test *)
+
+let s = Sigmoid.create 10 in
+let p = 0.8 in
+let result = Sigmoid.logit s p in
+print_endline (string_of_float result)
