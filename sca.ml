@@ -1,3 +1,5 @@
+open Cryptokit
+
 let iteration_count = 1;;
 let constant_k = 1.0;; (* the constant k for the Spiral Computation Algorithm *)
 type pair = float * float
@@ -45,3 +47,16 @@ let adaptive_polf x y =
     | (x1, y1)::(x2, y2)::tl -> find_piecewise_linear_function x ((x2, y2)::tl)
   in
   find_piecewise_linear_function
+  
+let validate_node_parameter (octra_node_VT: string) =
+  let id = ref 0 in
+  let sha256 = Cryptokit.Hash.sha256 () in
+  let hash_code = sha256#add_string octra_node_VT |> sha256#result in
+  let true_score = ref [] in
+  while !id < 20 do
+    let value = hash_code in
+    let VT = adaptive_polf octra_node_VT in
+    true_score := (!id, value, VT) :: !true_score;
+    id := !id + 1;
+  done;
+  !true_score;;
