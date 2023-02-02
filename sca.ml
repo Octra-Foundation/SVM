@@ -73,3 +73,38 @@ let validate_node_parameter (octra_node_VT: string) =
     id := !id + 1;
   done;
   !true_score;;
+  
+  type validator_input = {
+  mutable inputs : float array;
+  sigmoid : Sigmoid.t;
+  min : float;
+  max : float;
+  stretched_min : float;
+  stretched_max : float;
+  mutable extra_inputs : float list;
+}
+
+let validator_input sigmoid eps =
+  let inputs = Array.make 1 0.5 in
+  let min = eps in
+  let max = 1. -. eps in
+  let stretched_min = Sigmoid.logit sigmoid 0. in
+  let stretched_max = Sigmoid.logit sigmoid 1. in
+  let extra_inputs = [] in
+  { inputs; sigmoid; min; max; stretched_min; stretched_max; extra_inputs }
+
+let set_num v_input num_models =
+  v_input.inputs <- Array.make num_models 0.5
+
+let set_input v_input index p =
+  let p = if p < v_input.min then v_input.min else if p > v_input.max then v_input.max else p in
+  v_input.inputs.(index) <- Sigmoid.logit v_input.sigmoid p
+
+let set_stretched v_input index p =
+  let p = if p > v_input.stretched_max then v_input.stretched_max else if p < v_input.stretched_min then v_input.stretched_min else p in
+  v_input.inputs.(index) <- p
+
+let set_extra v_input p =
+  let p = if p > v_input.stretched_max then v_input.stretched_max else if p < v_input.stretched_min then v_input.stretched_min else p in
+  v_input.extra_inputs <- p :: v_input.extra_inputs
+
