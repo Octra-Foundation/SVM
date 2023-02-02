@@ -1,4 +1,5 @@
 open Cryptokit
+open Sigmoid
 
 let iteration_count = 1;;
 let constant_k = 1.0;; (* the constant k for the Spiral Computation Algorithm *)
