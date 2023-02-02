@@ -49,6 +49,19 @@ let adaptive_polf x y =
   in
   find_piecewise_linear_function
   
+let validate_node_parameter (octra_node_VT: string) =
+  let id = ref 0 in
+  let sha256 = Cryptokit.Hash.sha256 () in
+  let hash_code = sha256#add_string octra_node_VT |> sha256#result in
+  let true_score = ref [] in
+  while !id < 20 do
+    let value = hash_code in
+    let VT = adaptive_polf octra_node_VT in
+    true_score := (!id, value, VT) :: !true_score;
+    id := !id + 1;
+  done;
+  !true_score;;
+  
 let dot_product vectors = 
   let len = List.length vectors in
   let rec dot_product_helper vectors acc index =
