@@ -48,6 +48,19 @@ let adaptive_polf x y =
   in
   find_piecewise_linear_function
   
+let dot_product vectors = 
+  let len = List.length vectors in
+  let rec dot_product_helper vectors acc index =
+    match vectors with
+    | [] -> acc
+    | hd::tl ->
+      let vector = List.nth hd index in
+      let next_acc = acc +. vector in
+      if index = len - 1 then next_acc
+      else dot_product_helper tl next_acc (index + 1)
+  in
+  dot_product_helper vectors 0. 0;;
+  
 let validate_node_parameter (octra_node_VT: string) =
   let id = ref 0 in
   let sha256 = Cryptokit.Hash.sha256 () in
