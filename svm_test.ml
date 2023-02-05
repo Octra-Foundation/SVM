@@ -25,7 +25,21 @@ let f n =
   1.0 +. sqrt(inner_term) /. 2.0 ** (2.0 *. (float_of_int n) +. 2.0)
 ;;
 
-let sigmoid x = 1. /. (1. +. exp (-.x))
+module Sigmoid = struct
+  type t = { logit_size : int; logit_table : float array }
+
+  let create logit_size =
+    let logit_table = Array.init logit_size (fun i -> log ((float (i + 1)) /. (float (logit_size + 1))) -. log (1. -. (float (i + 1)) /. (float (logit_size + 1)))) in
+    { logit_size; logit_table }
+
+  let logit { logit_size; logit_table } p =
+    let index = int_of_float (p *. float logit_size) in
+    if index >= logit_size then logit_table.(logit_size - 1)
+    else if index < 0 then logit_table.(0)
+    else logit_table.(index)
+
+  let logistic p = 1. /. (1. +. exp (-.p))
+end
 
 let init_state () =
   let m1 = Array.make_matrix 100 100 0. in
@@ -34,7 +48,7 @@ let init_state () =
   for i = 0 to 99 do
     for j = 0 to 99 do
       m1.(i).(j) <- f (i * 100 + j);
-      m2.(i).(j) <- sigmoid m1.(i).(j);
+      m2.(i).(j) <- Sigmoid.logistic m1.(i).(j);
     done
   done;
   for i = 0 to 99 do
@@ -52,4 +66,4 @@ let print_float_matrix mat =
 ;;
 
 let result = init_state () in
-print_float_matrix result
+print_float_matrix result 
