@@ -122,3 +122,18 @@ let set_extra v_input p =
   let p = if p > v_input.stretched_max then v_input.stretched_max else if p < v_input.stretched_min then v_input.stretched_min else p in
   v_input.extra_inputs <- p :: v_input.extra_inputs
 
+let avg_vector octra_x octra_y = 
+  let scalar_product x y = 
+    let rec helper x y acc i = 
+      match x, y with
+      | [], [] -> acc
+      | hx::tx, hy::ty -> helper tx ty (acc +. hx *. hy) (i + 1)
+      | _ -> raise (Invalid_argument "Vectors have different length")
+    in helper x y 0.0 0
+  in 
+  let find_middle x y =
+    try 
+      [(List.hd x +. List.hd y) /. 2.0]
+    with Invalid_argument s -> [scalar_product x y]
+  in 
+  find_middle octra_x octra_y
