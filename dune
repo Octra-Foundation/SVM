@@ -1,0 +1,8 @@
+(library
+ (name octra_svm)
+ (libraries base)
+ (modules
+  sca.ml
+  sigmoid_v.ml
+  sigmoid.ml
+  svm_test.ml))
